@@ -390,6 +390,7 @@
 <div class="sticky" id="sticky"><a class="btn trade-link" href="#">Trade with Puff Now →</a></div>
 
 <script>
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   /* ================= EDIT HERE ================= */
 
   // Puff's trading page
@@ -483,7 +484,9 @@
     }).join("");
     document.querySelectorAll(".day").forEach(b => b.onclick = () => { activeDay = +b.dataset.d; renderDays(); renderPanel(); });
     const act = document.querySelector(".day.active");
-    if (act) act.scrollIntoView({ block: "nearest", inline: "center" });
+    // Center the active day inside the tab row only (never scroll the page itself)
+    const row = document.getElementById("days");
+    if (act && row) row.scrollLeft = act.offsetLeft - row.offsetLeft - (row.clientWidth - act.offsetWidth) / 2;
   }
 
   function renderPanel() {
