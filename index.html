@@ -194,10 +194,8 @@
   .lb-right{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
   .lb-tag{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 8px;white-space:nowrap}
   .lb-tag.ok{background:rgba(30,201,194,.18);color:var(--teal-dark)}
-  .lb-tag.gap{background:rgba(34,37,46,.07);color:var(--muted)}
+  .lb-tag.go{background:linear-gradient(180deg,#FFF1BF,#FFE07A);color:#8a5a00}
   .lb-tag.hot{background:linear-gradient(180deg,var(--orange1),var(--orange2));color:#fff}
-  .lb-row.locked{opacity:.78}
-  .lb-row.locked .lb-num{background:linear-gradient(180deg,#eef2f4,#d9e0e4)}
   .lb-line{display:flex;align-items:center;gap:8px;margin:14px 0 14px}
   .lb-line::before,.lb-line::after{content:"";flex:1;border-top:2.5px dashed var(--orange2)}
   @media (max-width:359px){
@@ -478,7 +476,7 @@
     const LINE = `<div class="lb-line" role="separator"><span>🔓 ${fmt(THRESHOLD)} Points · Prize line</span></div>`;
 
     const summary = unlocked
-      ? `<div class="lb-summary"><b>${unlocked}</b> of ${top.length} traders have unlocked a Top 30 prize.<br>Below the line? Reach <b>${fmt(THRESHOLD)} Points</b> to unlock yours.</div>`
+      ? `<div class="lb-summary"><b>${unlocked}</b> of ${top.length} traders have unlocked a Top 30 prize.<br>${unlocked < top.length ? `Below the line? Every trade brings you closer to <b>${fmt(THRESHOLD)} Points</b>!` : "Keep trading to climb higher!"}</div>`
       : `<div class="lb-summary">No one has unlocked a Top 30 prize yet.<br>Be the first to reach <b>${fmt(THRESHOLD)} Points</b>!</div>`;
 
     const rows = top.map((r, i) => {
@@ -486,9 +484,10 @@
       const gap = Math.ceil(THRESHOLD - r.points);
       const tag = ok ? `<span class="lb-tag ok">✓ Unlocked</span>`
                 : gap <= NEAR_GAP ? `<span class="lb-tag hot">🔥 ${fmt(gap)} to go!</span>`
-                : `<span class="lb-tag gap">Needs ${fmt(gap)}</span>`;
+                : gap <= 1500 ? `<span class="lb-tag go">💪 ${fmt(gap)} to unlock</span>`
+                : `<span class="lb-tag go">🚀 ${fmt(gap)} to unlock</span>`;
       const rank = i < 3 ? `<img src="${MEDALS[i]}" alt="${i + 1}">` : `<span class="lb-num">${i + 1}</span>`;
-      const row = `<div class="row-card lb-row${ok ? "" : " locked"}"><div class="lb-rank">${rank}</div><div class="lb-name">${esc(r.name)}</div><div class="lb-right"><div class="lb-pts">${fmt(r.points)} Points</div>${tag}</div></div>`;
+      const row = `<div class="row-card lb-row"><div class="lb-rank">${rank}</div><div class="lb-name">${esc(r.name)}</div><div class="lb-right"><div class="lb-pts">${fmt(r.points)} Points</div>${tag}</div></div>`;
       // Prize line sits right after the last trader who reached the threshold
       return (i === unlocked && unlocked < top.length ? LINE : "") + row;
     }).join("");
